@@ -121,17 +121,58 @@ void print_array(int arr[], int n)
 
 void copy_array(int *arr2, int *arr1, int size)
 {
-    
+    arr2[0]=size; //index 0 stores size of array
+    for(int i=1; i<=size; i++)
+    {
+        arr2[i]=arr1[i-1];
+    }
 }
 
 void generate_code(node *root, int arr[], int top, int distinct_characters, frequency *freq)   
 { 
+	if (root->left) 
+    { 
+        arr[top] = 0; 
+        generate_code(root->left, arr, top + 1, distinct_characters, freq); 
+    } 
+  
      
+    if (root->right) 
+    { 
+        arr[top] = 1; 
+        generate_code(root->right, arr, top + 1, distinct_characters, freq); 
+    } 
+    
+    if (root->left==NULL && root->right==NULL) 
+    { 
+        if(distinct_characters==1)  //condition is executed when only one type of character is present in data
+        {
+            freq[0].character=root->character;
+            freq[0].code[0]=1;  //size of code is 1
+            freq[0].code[1]=0;
+            return;
+        }
+        for(int i=0; i<distinct_characters; i++)
+        {
+            if(freq[i].character==root->character)
+            {
+                copy_array(freq[i].code,arr,top);
+                break;
+            }
+        }
+    }      
 
 } 
 
 void display_huffman_code(frequency *freq, int distinct_characters)
 {
+	 printf("###### HUFFMAN CODES ######\n\n");
+    for(int i=0; i<distinct_characters; i++)
+    {
+        printf("%c --> ", freq[i].character);
+        print_array(freq[i].code, freq[i].code[0]);
+        printf("\n");
+    }
 }
 
 int main() 
