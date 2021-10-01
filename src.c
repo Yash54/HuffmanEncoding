@@ -32,90 +32,57 @@ typedef struct queue
 
 void insert(priority_queue *p_queue, node *temp)
 {
-	qnode *q_node=(qnode *)calloc(1,sizeof(qnode));
-	q_node->ptr=temp;
-	q_node->next=NULL;
-	if(p_queue->front==NULL)
-	{
-		p_queue->front=q_node;
-		p_queue->rear=q_node;
-		return;
-	}
-	if(q_node->ptr->freq<p_queue->front->ptr->freq)
-	{
-		q_node->next=p_queue->front;
-		p_queue->front=q_node;		
-		return;
-	}
-	qnode *t=p_queue->front;
-	while(t->next!=NULL && t->next->ptr->freq<=q_node->ptr->freq)
-	{
-		t=t->next;
-	}
-	q_node->next=t->next;
-	if(t->next==NULL)
-	    p_queue->rear=q_node;
-	t->next=q_node;
+	
 }
 
 priority_queue *create_priority_queue(frequency *freq, int size)
 {
-	priority_queue *ptr=(priority_queue *)calloc(1,sizeof(priority_queue));
-	ptr->front=NULL;
-	ptr->rear=NULL;
-	for(int i=0; i<size; i++)
-	{
-		node *temp=(node *)calloc(1,sizeof(node));
-		temp->character=freq[i].character;
-		temp->freq=freq[i].freq;
-		temp->left=temp->right=NULL;
-		insert(ptr,temp);
-	}
-                return ptr;
+	
 }
 
 void calculate_frequency(char *data, int size, frequency *freq, int *distinct_characters)
 {
-    int i=0, k=0;
-    for(i=0;i<size;i++)
-    {
-        freq[k].freq=0;
-        if(data[i]==-1)
-            continue;
-        freq[k].character=data[i];
-        freq[k].freq++;
-        for(int j=i+1;j<size;j++)
-        {
-            if(data[j]==data[i])
-            {
-                freq[k].freq++;
-                data[j]=-1;
-            }
-        }
-        k++;
-    }
-    *distinct_characters=k;
+    
 }
 
 qnode *dequeue(priority_queue *p_queue)
 {
-    return NULL;
+    qnode *tmp=p_queue->front;
+    p_queue->front=p_queue->front->next;
+    return tmp;
 }
 
 
 void merge_two(qnode *q1, qnode *q2, priority_queue *p_queue) 
 {
-   
+   node *new_node=(node *)calloc(1,sizeof(node));
+    new_node->left=q1->ptr;
+    new_node->right=q2->ptr;
+    new_node->freq=(q1->ptr->freq)+(q2->ptr->freq);
+    insert(p_queue,new_node);
 }
 
 node *create_huffman_tree(priority_queue *p_queue, int distinct_characters)
 {
-    return NULL;
+    int i=0;
+    if(distinct_characters==1)
+        return p_queue->front->ptr;
+        
+    while(i<distinct_characters-1)
+    {
+    	qnode *q1=dequeue(p_queue), *q2=dequeue(p_queue);
+    	merge_two(q1,q2,p_queue);
+    	i++;
+    }
+    return p_queue->front->ptr;
 }
 
 
 void print_array(int arr[], int n) 
-{ 
+{
+    int i; 
+    for (i = 1; i <= n; ++i) 
+        printf("%d", arr[i]); 
 }
   
 
